@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EScutasse</title>
+  </head>
+
+  <body>
+    <div id="divicon">
+      <img id="iconsmile" src="img/Group 1.svg" alt=" icon smile" />
+    </div>
+
+    <p id="texto">
+      Ola, por enquanto voce conseguira acessar apenas o que tenho escutado, mas
+      no futuro voce podeera adicionar seus albuns favs e compartilhar com a
+      galera.
+    </p>
+
+    <div id="container">
+      <input type="text" placeholder="Pesquisar escolhas de Victor" />
+      <img id="imgsearch" src="img/🦆 icon _search_.png" alt="" />
+      <p>ou</p>
+      <button id="todos">Acessar sua lista de escolhas</button>
+    </div>
+
+    <style>
+      body {
+        background-color: #272727;
+      }
+
+      #divicon {
+        display: inline-block;
+        margin-left: 46vw;
+        margin-top: 2vh;
+      }
+
+      #texto {
+        font-family: "Inter";
+        font-weight: 550;
+        font-size: 14px;
+        line-height: 15px;
+        text-align: center;
+        line-height: 1.5;
+        color: #ffffff;
+      }
+
+      #container {
+        height: 20vh;
+      }
+
+      #container input {
+        display: inline-block;
+        width: 55vw;
+        height: 4vh;
+        padding-left: 10px;
+        margin-left: 20vw;
+        margin-top: 2vh;
+        background: #d9d9d9;
+        border-radius: 10px;
+        border: none;
+      }
+
+      #imgsearch {
+        display: inline-block;
+        position: absolute;
+        margin-left: -9vw;
+        top: 20vh;
+      }
+
+      #container p {
+        text-align: center;
+
+        font-family: "Inter";
+        font-style: normal;
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 15px;
+        color: #ffe977;
+      }
+
+      #container button {
+        display: inline-block;
+        width: 58vw;
+        height: 4vh;
+        margin-left: 20vw;
+        background: #d9d9d9;
+        border-radius: 10px;
+        border: none;
+      }
+
+      .album {
+        display: inline-block;
+        width: 36vw;
+        margin: 5vw;
+      }
+
+      .albumImage {
+        display: inline-block;
+        width: 25vw;
+        height: 11vh;
+        margin-left: 10vw;
+        background-color: #ffffff;
+      }
+
+      .albumTittle {
+        width: 31vw;
+        font-family: fantasy;
+        margin-left: 12vw;
+        color: #ffffff;
+        text-align: start;
+      }
+
+      .albumYear {
+        text-align: justify;
+        margin-left: 10vw;
+        margin-top: -1vh;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .albumArtist {
+        text-align: justify;
+        margin-left: 18vw;
+        margin-top: -3vh;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .albumImage > img {
+        width: inherit;
+      }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#todos").click(function () {
+          function fetchAlbums() {
+            var settings = {
+              async: true,
+              crossDomain: true,
+              url: "http://127.0.0.1:3000/album",
+              method: "GET",
+            };
+
+            $.ajax(settings)
+              .done(function (data) {
+                if (!Array.isArray(data.albuns)) {
+                  console.error("Data is not an array");
+                  return;
+                }
+                data.albuns.forEach((album) => {
+                  const albumDiv = $("<div>").addClass("album");
+
+                  const albumImageDiv = $("<div>").addClass("albumImage");
+                  const albumImage = $("<img>")
+                    .attr("src", album.picture)
+                    .attr("alt", album.tittle);
+                  albumImageDiv.append(albumImage);
+                  albumDiv.append(albumImageDiv);
+
+                  const albumTitle = $("<p>")
+                    .addClass("albumTittle")
+                    .text(album.tittle);
+                  const albumYear = $("<p>")
+                    .addClass("albumYear")
+                    .text(album.year);
+                  const albumArtist = $("<p>")
+                    .addClass("albumArtist")
+                    .text(album.artist);
+
+                  albumDiv.append(albumTitle);
+                  albumDiv.append(albumYear);
+                  albumDiv.append(albumArtist);
+
+                  // Add album div to the body
+                  $("body").append(albumDiv);
+                });
+              })
+              .fail(function (error) {
+                console.error(error);
+              });
+          }
+
+          fetchAlbums();
+        });
+      });
+
+      function searchAlbuns(album) {
+      $('#titlle').empty();
+      $('#artist').empty();
+      $('#year').empty();
+      $("#picture").empty();
+
+      var settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": "https://www.omdbapi.com/?t=" + album + "&apikey=1993e977",
+        "method": "GET"
+      }
+
+      $.ajax(settings).done(function (response) {
+        console.log(response);
+        $('#titlle').append(response.albumTittle + "(" + response.year + ")");
+        $("#my_image").attr("src", response.Poster);
+        $('#description').append(response.Plot);
+        $('#imdb').append("IMDB: " + response.imdbRating);
+      });
+    </script>
+  </body>
+</html>
